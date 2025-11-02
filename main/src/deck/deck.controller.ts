@@ -1,0 +1,218 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Post,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeckService } from './deck.service';
+import { LearningSessionService } from './learning-session.service';
+import { ReviewSessionService } from './review-session.service';
+import { CreateDeckDto } from './dto/create-deck.dto';
+import {
+  CurrentUser,
+  type ICurrentUser,
+} from 'src/auth/decorators/current-user.decorator';
+import { Auth } from 'src/common/decorators/auth';
+import { CreateDeckResponseDto } from './dto/create-deck-response.dto';
+import { ValidateResponse } from 'src/common/decorators/validate-response.decorator';
+import { RenameDeckDto } from './dto/rename-deck.dto';
+import { RenameDeckResponseDto } from './dto/rename-deck-response.dto';
+import { DeleteDeckResponseDto } from './dto/delete-deck-response.dto';
+import { DeleteDeckDto } from './dto/delete-deck.dto';
+import { GetDeckResponseDto } from './dto/get-deck-response.dto';
+import { StartLearningSessionResponseDto } from './dto/learning-session/start-response.dto';
+import { StartLearningSessionDto } from './dto/learning-session/start.dto';
+import { StartReviewSessionDto } from './dto/review-session/start.dto';
+import { StartReviewSessionResponseDto } from './dto/review-session/start-response.dto';
+import { FinishLearningSessionResponseDto } from './dto/learning-session/finish-response.dto';
+import { FinishLearningSessionDto } from './dto/learning-session/finish.dto';
+import { FinishReviewCardResponseDto } from './dto/review-session/finish-response.dto';
+import { FinishReviewCardDto } from './dto/review-session/finish.dto';
+import { LearningStrategyType } from 'src/common/types/learningStrategyType';
+import { MoveResponseDto } from './dto/move-response.dto';
+import { MoveDto } from './dto/move.dto';
+import { StartReviewAllCardsSessionDto } from './dto/review-session/start-all.dto';
+import { StartReviewAllCardsSessionResponseDto } from './dto/review-session/start-all-response.dto';
+
+@ApiTags('Decks')
+@Controller('deck')
+export class DeckController {
+  constructor(
+    private readonly deskService: DeckService,
+    private readonly learningSessionService: LearningSessionService,
+    private readonly reviewSessionService: ReviewSessionService,
+  ) {}
+
+  @Post('create')
+  @Auth()
+  @ApiOperation({ summary: 'Create a new deck' })
+  @ApiOkResponse({
+    description: 'Returns the created deck',
+    type: CreateDeckResponseDto,
+  })
+  @ValidateResponse(CreateDeckResponseDto)
+  create(
+    @CurrentUser() user: ICurrentUser,
+    @Body() createDeckDto: CreateDeckDto,
+  ): Promise<CreateDeckResponseDto> {
+    return this.deskService.create(user.id, createDeckDto);
+  }
+
+  @Patch('rename')
+  @Auth()
+  @ApiOperation({ summary: 'Rename a deck' })
+  @ApiOkResponse({
+    description: 'Returns the renamed deck',
+    type: RenameDeckResponseDto,
+  })
+  @ValidateResponse(RenameDeckResponseDto)
+  rename(
+    @CurrentUser() user: ICurrentUser,
+    @Body() renameDeckDto: RenameDeckDto,
+  ): Promise<RenameDeckResponseDto> {
+    return this.deskService.rename(user.id, renameDeckDto);
+  }
+
+  @Delete('delete')
+  @ApiOperation({ summary: 'Delete a deck' })
+  @ApiOkResponse({
+    description: 'Returns the message about deleted deck',
+    type: DeleteDeckResponseDto,
+  })
+  @ValidateResponse(DeleteDeckResponseDto)
+  @Auth()
+  delete(
+    @CurrentUser() user: ICurrentUser,
+    @Body() deleteDeckDto: DeleteDeckDto,
+  ): Promise<DeleteDeckResponseDto> {
+    return this.deskService.delete(user.id, deleteDeckDto);
+  }
+
+  @Patch('move')
+  @Auth()
+  @ApiOperation({ summary: 'Move a deck to a folder' })
+  @ApiOkResponse({
+    description: 'Returns the message about moved deck',
+    type: MoveResponseDto,
+  })
+  @ValidateResponse(MoveResponseDto)
+  move(
+    @CurrentUser() user: ICurrentUser,
+    @Body() moveDto: MoveDto,
+  ): Promise<MoveResponseDto> {
+    return this.deskService.move(user.id, moveDto);
+  }
+
+  @Get('start-learning-session')
+  @Auth()
+  @ApiOperation({ summary: 'Start learning session with new cards' })
+  @ApiOkResponse({
+    description: 'Returns new cards to start learning',
+    type: StartLearningSessionResponseDto,
+    isArray: true,
+  })
+  @ValidateResponse(StartLearningSessionResponseDto)
+  startLearningSession(
+    @CurrentUser() user: ICurrentUser,
+    @Query() startLearningSessionDto: StartLearningSessionDto,
+  ): Promise<StartLearningSessionResponseDto> {
+    return this.learningSessionService.startSession(
+      user.id,
+      startLearningSessionDto,
+    );
+  }
+
+  @Patch('finish-learning-session')
+  @Auth()
+  @ApiOperation({ summary: 'Finish learning session' })
+  @ApiOkResponse({
+    description: 'Returns the message about finished learning session',
+    type: FinishLearningSessionResponseDto,
+  })
+  @ValidateResponse(FinishLearningSessionResponseDto)
+  finishLearningSession(
+    @CurrentUser() user: ICurrentUser,
+    @Body() finishLearningSessionDto: FinishLearningSessionDto,
+  ): Promise<FinishLearningSessionResponseDto> {
+    return this.learningSessionService.finishSession(
+      user.id,
+      finishLearningSessionDto,
+    );
+  }
+
+  @Get('start-review-session')
+  @Auth()
+  @ApiOperation({ summary: 'Start review session with learned cards' })
+  @ApiOkResponse({
+    description: 'Returns cards for review session',
+    type: StartReviewSessionResponseDto,
+    isArray: true,
+  })
+  @ValidateResponse(StartReviewSessionResponseDto)
+  startReviewSession(
+    @CurrentUser() user: ICurrentUser,
+    @Query() startReviewSessionDto: StartReviewSessionDto,
+  ): Promise<StartReviewSessionResponseDto> {
+    return this.reviewSessionService.startSession(
+      user.id,
+      startReviewSessionDto,
+    );
+  }
+
+  @Patch('finish-review-card')
+  @Auth()
+  @ApiOperation({
+    summary: 'Finish review card',
+    description: `List of learning strategy types: ${Object.values(LearningStrategyType).join(', ')}`,
+  })
+  @ApiOkResponse({
+    description: 'Returns the message about finished review card',
+    type: FinishReviewCardResponseDto,
+  })
+  @ValidateResponse(FinishReviewCardResponseDto)
+  finishReviewCard(
+    @CurrentUser() user: ICurrentUser,
+    @Body() finishReviewCardDto: FinishReviewCardDto,
+  ): Promise<FinishReviewCardResponseDto> {
+    return this.reviewSessionService.finishCard(user.id, finishReviewCardDto);
+  }
+
+  @Get('start-review-all-cards-session')
+  @Auth()
+  @ApiOperation({ summary: 'Start review session with all cards' })
+  @ApiOkResponse({
+    description: 'Returns all cards for review session',
+    type: StartReviewAllCardsSessionResponseDto,
+    isArray: true,
+  })
+  @ValidateResponse(StartReviewAllCardsSessionResponseDto)
+  startReviewAllCardsSession(
+    @CurrentUser() user: ICurrentUser,
+    @Query() startReviewSessionDto: StartReviewAllCardsSessionDto,
+  ): Promise<StartReviewAllCardsSessionResponseDto> {
+    return this.reviewSessionService.startAllCardsSession(
+      user.id,
+      startReviewSessionDto,
+    );
+  }
+
+  @Get(':id')
+  @Auth()
+  @ApiOperation({ summary: 'Get a deck' })
+  @ApiOkResponse({
+    description: 'Returns the deck',
+    type: GetDeckResponseDto,
+  })
+  @ValidateResponse(GetDeckResponseDto)
+  get(
+    @CurrentUser() user: ICurrentUser,
+    @Param('id') deckId: string,
+  ): Promise<GetDeckResponseDto> {
+    return this.deskService.getDeck(user.id, deckId);
+  }
+}
