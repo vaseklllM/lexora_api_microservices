@@ -5,6 +5,7 @@ import { VertexModule } from './vertex/vertex.module';
 import { AiModule } from './ai/ai.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './common/strategies/jwt.strategy';
+import { TtsModule } from './tts/tts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { JwtStrategy } from './common/strategies/jwt.strategy';
       signOptions: { expiresIn: '1h' },
     }),
     AiModule,
+    TtsModule,
     VertexModule,
   ],
   controllers: [AppController],

@@ -65,8 +65,6 @@ export class CardService {
 
     const promises: Promise<string>[] = [];
 
-    // console.log(language);
-
     if (
       Array.isArray(language?.googleTtsVoiceFemaleName) &&
       language?.googleTtsVoiceFemaleName.length > 0
