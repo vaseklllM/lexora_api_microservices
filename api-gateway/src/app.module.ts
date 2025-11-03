@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './common/strategies/jwt.strategy';
 import { AiModule } from '././ai/ai.module';
 import { AuthModule } from './auth/auth.module';
+import { FolderModule } from './folder/folder.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     AiModule,
     AuthModule,
+    FolderModule,
   ],
   controllers: [AppController],
   providers: [JwtStrategy],
