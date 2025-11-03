@@ -7,6 +7,8 @@ import { RegisterDto } from './dto/register.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
 import { ICurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LogoutResponseDto } from './dto/logout-response.dto';
+import { RefreshDto } from './dto/refresh.dto';
+import { RefreshResponseDto } from './dto/refresh-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +40,14 @@ export class AuthService {
           },
         },
       ),
+    );
+
+    return response.data;
+  }
+
+  async refresh(refreshDto: RefreshDto): Promise<RefreshResponseDto> {
+    const response = await firstValueFrom(
+      this.httpService.post('auth/refresh', refreshDto),
     );
 
     return response.data;
@@ -138,50 +148,6 @@ export class AuthService {
   //       };
   //     },
   //   );
-  // }
-
-  // async refresh(refreshDto: RefreshDto): Promise<RefreshResponseDto> {
-  //   try {
-  //     const jwtPayload: JwtPayload = await this.jwtService.verify(
-  //       refreshDto.refreshToken,
-  //       {
-  //         secret: Buffer.from(
-  //           process.env.JWT_REFRESH_SECRET as string,
-  //           'utf-8',
-  //         ),
-  //       },
-  //     );
-
-  //     if (!jwtPayload) {
-  //       throw new UnauthorizedException('Invalid refresh token');
-  //     }
-
-  //     const redisUserId = await this.redisService.getJwtRefresh(
-  //       jwtPayload.jwtId,
-  //     );
-
-  //     if (redisUserId) {
-  //       throw new UnauthorizedException();
-  //     }
-
-  //     await this.redisService.setJwtLogout(jwtPayload);
-  //     await this.redisService.setJwtRefresh(jwtPayload);
-
-  //     const user = await this.databaseService.user.findUnique({
-  //       where: { id: jwtPayload.sub },
-  //     });
-
-  //     if (!user) {
-  //       throw new UnauthorizedException('User not found');
-  //     }
-
-  //     return this.generateTokens(user);
-  //   } catch (error) {
-  //     if (error instanceof JsonWebTokenError) {
-  //       throw new UnauthorizedException('Invalid refresh token');
-  //     }
-  //     throw error;
-  //   }
   // }
 
   // async me(userId: string): Promise<UserDto> {

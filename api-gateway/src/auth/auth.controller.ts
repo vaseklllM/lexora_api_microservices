@@ -13,6 +13,8 @@ import {
   CurrentUser,
   type ICurrentUser,
 } from 'src/common/decorators/current-user.decorator';
+import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -53,16 +55,16 @@ export class AuthController {
     return this.authService.logout(user);
   }
 
-  // @Post('refresh')
-  // @ApiOperation({ summary: 'Refresh access token' })
-  // @ApiOkResponse({
-  //   description: 'Refresh access token',
-  //   type: RefreshResponseDto,
-  // })
-  // @ValidateResponse(RefreshResponseDto)
-  // refresh(@Body() refreshDto: RefreshDto): Promise<RefreshResponseDto> {
-  //   return this.authService.refresh(refreshDto);
-  // }
+  @Post('refresh')
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOkResponse({
+    description: 'Refresh access token',
+    type: RefreshResponseDto,
+  })
+  @ValidateResponse(RefreshResponseDto)
+  refresh(@Body() refreshDto: RefreshDto): Promise<RefreshResponseDto> {
+    return this.authService.refresh(refreshDto);
+  }
 
   // @Post('google')
   // @ApiOperation({ summary: 'Google login' })
