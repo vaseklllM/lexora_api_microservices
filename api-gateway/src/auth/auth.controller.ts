@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -15,6 +15,8 @@ import {
 } from 'src/common/decorators/current-user.decorator';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
+import { UserDto } from './dto/user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -66,28 +68,28 @@ export class AuthController {
     return this.authService.refresh(refreshDto);
   }
 
-  // @Post('google')
-  // @ApiOperation({ summary: 'Google login' })
-  // @ApiOkResponse({
-  //   description: 'Google login',
-  //   type: LoginResponseDto,
-  // })
-  // @ValidateResponse(LoginResponseDto)
-  // googleLogin(
-  //   @Body() googleLoginDto: GoogleLoginDto,
-  // ): Promise<LoginResponseDto> {
-  //   return this.authService.googleLogin(googleLoginDto);
-  // }
+  @Post('google')
+  @ApiOperation({ summary: 'Google login' })
+  @ApiOkResponse({
+    description: 'Google login',
+    type: LoginResponseDto,
+  })
+  @ValidateResponse(LoginResponseDto)
+  googleLogin(
+    @Body() googleLoginDto: GoogleLoginDto,
+  ): Promise<LoginResponseDto> {
+    return this.authService.googleLogin(googleLoginDto);
+  }
 
-  // @Get('me')
-  // @Auth()
-  // @ApiOperation({ summary: 'Get current user info' })
-  // @ApiOkResponse({
-  //   description: 'Returns current user info',
-  //   type: UserDto,
-  // })
-  // @ValidateResponse(UserDto)
-  // async me(@CurrentUser() user: ICurrentUser): Promise<UserDto> {
-  //   return this.authService.me(user.id);
-  // }
+  @Get('me')
+  @Auth()
+  @ApiOperation({ summary: 'Get current user info' })
+  @ApiOkResponse({
+    description: 'Returns current user info',
+    type: UserDto,
+  })
+  @ValidateResponse(UserDto)
+  me(@CurrentUser() user: ICurrentUser): Promise<UserDto> {
+    return this.authService.me(user.accessToken);
+  }
 }

@@ -9,6 +9,8 @@ import { ICurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LogoutResponseDto } from './dto/logout-response.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -53,125 +55,23 @@ export class AuthService {
     return response.data;
   }
 
-  // async googleLogin(googleLoginDto: GoogleLoginDto): Promise<LoginResponseDto> {
-  //   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-  //   const ticket = await client.verifyIdToken({
-  //     idToken: googleLoginDto.idToken,
-  //     audience: process.env.GOOGLE_CLIENT_ID,
-  //   });
-  //   const payload = ticket.getPayload();
+  async googleLogin(googleLoginDto: GoogleLoginDto): Promise<LoginResponseDto> {
+    const response = await firstValueFrom(
+      this.httpService.post('auth/google', googleLoginDto),
+    );
 
-  //   if (!payload?.email) {
-  //     throw new UnauthorizedException('Google account email not available');
-  //   }
+    return response.data;
+  }
 
-  //   if (payload.email_verified === false) {
-  //     throw new UnauthorizedException('Google email is not verified');
-  //   }
+  async me(accessToken: string): Promise<UserDto> {
+    const response = await firstValueFrom(
+      this.httpService.get('auth/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
+    );
 
-  //   if (
-  //     googleLoginDto.email &&
-  //     googleLoginDto.email.toLowerCase() !== payload.email.toLowerCase()
-  //   ) {
-  //     throw new UnauthorizedException('Email mismatch for Google login');
-  //   }
-
-  //   return await this.databaseService.$transaction(
-  //     async (tx): Promise<LoginResponseDto> => {
-  //       const user = await tx.user.findUnique({
-  //         where: { email: payload.email },
-  //         include: {
-  //           accounts: true,
-  //           language: true,
-  //         },
-  //       });
-
-  //       if (!user) {
-  //         const newUser = await tx.user.create({
-  //           data: {
-  //             email: payload.email!,
-  //             name: payload.name!,
-  //             avatar: payload.picture,
-  //             accounts: {
-  //               create: {
-  //                 provider: AccountProvider.google,
-  //                 type: AccountType.oauth,
-  //                 providerAccountId: googleLoginDto.accountId,
-  //               },
-  //             },
-  //           },
-  //           include: {
-  //             language: true,
-  //           },
-  //         });
-
-  //         return {
-  //           ...this.generateTokens(newUser),
-  //           user: {
-  //             id: newUser.id,
-  //             email: newUser.email,
-  //             name: newUser.name,
-  //             createdAt: newUser.createdAt.toISOString(),
-  //             updatedAt: newUser.updatedAt.toISOString(),
-  //             avatar: newUser.avatar ?? undefined,
-  //             language: this.languagesService.convertLanguageToLanguageDto(
-  //               newUser.language,
-  //             ),
-  //           },
-  //         };
-  //       }
-
-  //       if (!user.accounts.some((i) => i.provider === AccountProvider.google)) {
-  //         await this.databaseService.account.create({
-  //           data: {
-  //             type: AccountType.oauth,
-  //             provider: AccountProvider.google,
-  //             providerAccountId: googleLoginDto.accountId,
-  //             userId: user.id,
-  //           },
-  //         });
-  //       }
-
-  //       return {
-  //         ...this.generateTokens(user),
-  //         user: {
-  //           id: user.id,
-  //           email: user.email,
-  //           name: user.name,
-  //           createdAt: user.createdAt.toISOString(),
-  //           updatedAt: user.updatedAt.toISOString(),
-  //           avatar: user.avatar ?? undefined,
-  //           language: this.languagesService.convertLanguageToLanguageDto(
-  //             user.language,
-  //           ),
-  //         },
-  //       };
-  //     },
-  //   );
-  // }
-
-  // async me(userId: string): Promise<UserDto> {
-  //   const user = await this.databaseService.user.findUnique({
-  //     where: { id: userId },
-  //     include: {
-  //       language: true,
-  //     },
-  //   });
-
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //   return {
-  //     id: user.id,
-  //     email: user.email,
-  //     name: user.name,
-  //     createdAt: user.createdAt.toISOString(),
-  //     updatedAt: user.updatedAt.toISOString(),
-  //     avatar: user.avatar ?? undefined,
-  //     language: this.languagesService.convertLanguageToLanguageDto(
-  //       user.language,
-  //     ),
-  //   };
-  // }
+    return response.data;
+  }
 }
