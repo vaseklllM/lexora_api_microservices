@@ -2,14 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import * as express from 'express';
-import { join } from 'path';
 import morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  app.use('/public', express.static(join(process.cwd(), 'public')));
 
   app.use(morgan('dev'));
 
