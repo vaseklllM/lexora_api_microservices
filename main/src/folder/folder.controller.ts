@@ -70,7 +70,11 @@ export class FolderController {
     @Body() deleteFolderDto: DeleteFolderDto,
     @CurrentUser() user: ICurrentUser,
   ): Promise<DeleteFolderResponseDto> {
-    return this.folderService.delete(user.id, deleteFolderDto);
+    return this.folderService.delete(
+      user.id,
+      user.accessToken,
+      deleteFolderDto,
+    );
   }
 
   @Get(':id')

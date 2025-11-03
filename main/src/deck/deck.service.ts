@@ -322,6 +322,7 @@ export class DeckService {
 
   async delete(
     userId: string,
+    accessToken: string,
     deleteDeckDto: DeleteDeckDto,
   ): Promise<DeleteDeckResponseDto> {
     const transactionResult = await this.databaseService.$transaction(
@@ -348,7 +349,10 @@ export class DeckService {
       },
     );
 
-    await this.cardService.deleteUnuseSoundUrls(transactionResult.soundUrls);
+    await this.cardService.deleteUnuseSoundUrls(
+      accessToken,
+      transactionResult.soundUrls,
+    );
 
     return {
       message: `Deck '${transactionResult.deckName}' deleted successfully`,

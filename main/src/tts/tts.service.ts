@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs/promises';
-import { existsSync } from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
@@ -32,10 +30,16 @@ export class TtsService {
     return response.data.url;
   }
 
-  async deleteSoundUrl(soundUrl: string): Promise<void> {
-    const path = `./public/tts/${soundUrl}`;
-    if (existsSync(path)) {
-      await fs.unlink(path);
-    }
+  async deleteSoundUrl(accessToken: string, soundUrl: string): Promise<void> {
+    await firstValueFrom(
+      this.httpService.delete<{ url: string; fullUrl: string }>('tts/delete', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: {
+          ttsUrl: soundUrl,
+        },
+      }),
+    );
   }
 }

@@ -201,7 +201,10 @@ export class CardService {
     );
 
     if (transactionResult.isUpdatedLearningText) {
-      await this.deleteUnuseSoundUrls(transactionResult.deleteSoundUrls);
+      await this.deleteUnuseSoundUrls(
+        accessToken,
+        transactionResult.deleteSoundUrls,
+      );
 
       const soundUrls = await this.generateSoundUrls(
         accessToken,
@@ -222,7 +225,10 @@ export class CardService {
     return this.convertCardToGetCardResponseDto(transactionResult.newCard);
   }
 
-  public async deleteUnuseSoundUrls(soundUrls: string[]): Promise<void> {
+  public async deleteUnuseSoundUrls(
+    accessToken: string,
+    soundUrls: string[],
+  ): Promise<void> {
     for (const soundUrl of soundUrls) {
       const cardWithSameSoundUrl = await this.databaseService.card.findFirst({
         where: { soundUrls: { has: soundUrl } },
@@ -232,11 +238,15 @@ export class CardService {
         continue;
       }
 
-      await this.ttsService.deleteSoundUrl(soundUrl);
+      await this.ttsService.deleteSoundUrl(accessToken, soundUrl);
     }
   }
 
-  async delete(userId: string, cardId: string): Promise<DeleteCardResponseDto> {
+  async delete(
+    userId: string,
+    accessToken: string,
+    cardId: string,
+  ): Promise<DeleteCardResponseDto> {
     const { textInLearningLanguage, soundUrls } =
       await this.databaseService.$transaction(async (tx) => {
         const card = await tx.card.findFirst({
@@ -257,7 +267,7 @@ export class CardService {
         };
       });
 
-    await this.deleteUnuseSoundUrls(soundUrls);
+    await this.deleteUnuseSoundUrls(accessToken, soundUrls);
 
     return {
       message: `Card '${textInLearningLanguage}' deleted successfully`,

@@ -251,6 +251,7 @@ export class FolderService {
 
   async delete(
     userId: string,
+    accessToken: string,
     deleteFolderDto: DeleteFolderDto,
   ): Promise<DeleteFolderResponseDto> {
     const transactionResult = await this.databaseService.$transaction(
@@ -303,7 +304,10 @@ export class FolderService {
       },
     );
 
-    await this.cardService.deleteUnuseSoundUrls(transactionResult.soundUrls);
+    await this.cardService.deleteUnuseSoundUrls(
+      accessToken,
+      transactionResult.soundUrls,
+    );
 
     return { message: 'Folder deleted successfully' };
   }

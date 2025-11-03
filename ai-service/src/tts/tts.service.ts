@@ -6,6 +6,7 @@ import { join } from 'path';
 import { SynthesizeDto } from './dto/synthesize.dto';
 import { SynthesizeResponseDto } from './dto/synthesize-response.dto';
 import { ConfigService } from '@nestjs/config';
+import { DeleteTTSResponseDto } from './dto/delete-tts-response.dto';
 
 @Injectable()
 export class TtsService {
@@ -73,10 +74,14 @@ export class TtsService {
     };
   }
 
-  async deleteSoundUrl(soundUrl: string): Promise<void> {
+  async deleteSoundUrl(soundUrl: string): Promise<DeleteTTSResponseDto> {
     const path = `./public/tts/${soundUrl}`;
     if (existsSync(path)) {
       await fs.unlink(path);
     }
+
+    return {
+      message: 'TTS deleted successfully',
+    };
   }
 }

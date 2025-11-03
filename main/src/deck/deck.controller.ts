@@ -90,7 +90,7 @@ export class DeckController {
     @CurrentUser() user: ICurrentUser,
     @Body() deleteDeckDto: DeleteDeckDto,
   ): Promise<DeleteDeckResponseDto> {
-    return this.deskService.delete(user.id, deleteDeckDto);
+    return this.deskService.delete(user.id, user.accessToken, deleteDeckDto);
   }
 
   @Patch('move')

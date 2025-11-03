@@ -84,6 +84,6 @@ export class CardController {
     @Param('id') cardId: string,
     @CurrentUser() user: ICurrentUser,
   ): Promise<DeleteCardResponseDto> {
-    return this.cardService.delete(user.id, cardId);
+    return this.cardService.delete(user.id, user.accessToken, cardId);
   }
 }

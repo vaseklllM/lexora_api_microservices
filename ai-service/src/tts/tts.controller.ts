@@ -1,9 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post } from '@nestjs/common';
 import { TtsService } from './tts.service';
 import { Auth } from 'src/common/decorators/auth';
 import { ValidateResponse } from 'src/common/decorators/validate-response.decorator';
 import { SynthesizeDto } from './dto/synthesize.dto';
 import { SynthesizeResponseDto } from './dto/synthesize-response.dto';
+import { DeleteTTSDto } from './dto/delete-tts.dto';
+import { DeleteTTSResponseDto } from './dto/delete-tts-response.dto';
 
 @Controller('tts')
 export class TtsController {
@@ -16,5 +18,12 @@ export class TtsController {
     @Body() synthesizeDto: SynthesizeDto,
   ): Promise<SynthesizeResponseDto> {
     return this.ttsService.synthesizeText(synthesizeDto);
+  }
+
+  @Delete('delete')
+  @Auth()
+  @ValidateResponse(DeleteTTSResponseDto)
+  delete(@Body() deleteTTSDto: DeleteTTSDto): Promise<DeleteTTSResponseDto> {
+    return this.ttsService.deleteSoundUrl(deleteTTSDto.ttsUrl);
   }
 }
