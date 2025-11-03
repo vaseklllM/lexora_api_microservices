@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -11,40 +11,18 @@ export class AuthService {
   constructor(private readonly httpService: HttpService) {}
 
   async login(user: LoginDto): Promise<LoginResponseDto> {
-    try {
-      const response = await firstValueFrom(
-        this.httpService.post('auth/login', user),
-      );
-      return response.data;
-    } catch (error) {
-      if (error.response) {
-        throw new HttpException(error.response.data, error.response.status);
-      }
-
-      throw new HttpException(
-        'Service unavailable',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
-    }
+    const response = await firstValueFrom(
+      this.httpService.post('auth/login', user),
+    );
+    return response.data;
   }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
-    try {
-      const response = await firstValueFrom(
-        this.httpService.post('auth/register', registerDto),
-      );
+    const response = await firstValueFrom(
+      this.httpService.post('auth/register', registerDto),
+    );
 
-      return response.data;
-    } catch (error) {
-      if (error.response) {
-        throw new HttpException(error.response.data, error.response.status);
-      }
-
-      throw new HttpException(
-        'Service unavailable',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
-    }
+    return response.data;
   }
 
   // async googleLogin(googleLoginDto: GoogleLoginDto): Promise<LoginResponseDto> {

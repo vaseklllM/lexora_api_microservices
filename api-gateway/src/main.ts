@@ -4,10 +4,13 @@ import { BadRequestException } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  app.useGlobalInterceptors(new HttpErrorInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({
