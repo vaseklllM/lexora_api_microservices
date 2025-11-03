@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -25,11 +25,22 @@ export class AuthService {
   // }
 
   async login(user: LoginDto): Promise<LoginResponseDto> {
-    const response = await firstValueFrom(
-      this.httpService.post('auth/login', user),
-    );
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post('auth/login', user),
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+
+      throw new HttpException(
+        'Service unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
   }
 
   // async googleLogin(googleLoginDto: GoogleLoginDto): Promise<LoginResponseDto> {
