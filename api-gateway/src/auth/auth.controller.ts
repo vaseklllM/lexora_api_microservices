@@ -5,6 +5,8 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { ValidateResponse } from '../common/decorators/validate-response.decorator';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -22,17 +24,16 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  // @Post('register')
-  // @ApiOperation({ summary: 'User register' })
-  // @Throttle({ short: { limit: 5, ttl: 30000 } })
-  // @ApiOkResponse({
-  //   description: 'Registers user and returns access token',
-  //   type: RegisterResponseDto,
-  // })
-  // @ValidateResponse(RegisterResponseDto)
-  // register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
-  //   return this.authService.register(registerDto);
-  // }
+  @Post('register')
+  @ApiOperation({ summary: 'User register' })
+  @ApiOkResponse({
+    description: 'Registers user and returns access token',
+    type: RegisterResponseDto,
+  })
+  @ValidateResponse(RegisterResponseDto)
+  register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
+    return this.authService.register(registerDto);
+  }
 
   // @Post('logout')
   // @Auth()

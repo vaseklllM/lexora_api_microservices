@@ -3,6 +3,8 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +30,25 @@ export class AuthService {
     try {
       const response = await firstValueFrom(
         this.httpService.post('auth/login', user),
+      );
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+
+      throw new HttpException(
+        'Service unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post('auth/register', registerDto),
       );
 
       return response.data;
@@ -138,56 +159,6 @@ export class AuthService {
   //       };
   //     },
   //   );
-  // }
-
-  // async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
-  //   const userCreated = await this.databaseService.$transaction(async (tx) => {
-  //     const existingUser = await tx.user.findUnique({
-  //       where: { email: registerDto.email },
-  //     });
-
-  //     if (existingUser) {
-  //       throw new ConflictException('User with this email already exists');
-  //     }
-
-  //     const hash = await argon2.hash(registerDto.password, {
-  //       secret: Buffer.from(process.env.PASSWORD_SECRET as string, 'utf-8'),
-  //     });
-
-  //     const userCreated = await tx.user.create({
-  //       data: {
-  //         email: registerDto.email,
-  //         name: registerDto.name,
-  //         accounts: {
-  //           create: {
-  //             provider: AccountProvider.credentials,
-  //             type: AccountType.credentials,
-  //             passwordHash: hash,
-  //           },
-  //         },
-  //       },
-  //       include: {
-  //         language: true,
-  //       },
-  //     });
-
-  //     return userCreated;
-  //   });
-
-  //   return {
-  //     ...this.generateTokens(userCreated),
-  //     user: {
-  //       id: userCreated.id,
-  //       email: userCreated.email,
-  //       name: userCreated.name,
-  //       createdAt: userCreated.createdAt.toISOString(),
-  //       updatedAt: userCreated.updatedAt.toISOString(),
-  //       avatar: userCreated.avatar ?? undefined,
-  //       language: this.languagesService.convertLanguageToLanguageDto(
-  //         userCreated.language,
-  //       ),
-  //     },
-  //   };
   // }
 
   // async logout(currentUser: ICurrentUser): Promise<LogoutResponseDto> {
