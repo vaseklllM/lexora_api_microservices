@@ -5,6 +5,8 @@ import { firstValueFrom } from 'rxjs';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
+import { ICurrentUser } from 'src/common/decorators/current-user.decorator';
+import { LogoutResponseDto } from './dto/logout-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -122,34 +124,21 @@ export class AuthService {
   //   );
   // }
 
-  // async logout(currentUser: ICurrentUser): Promise<LogoutResponseDto> {
-  //   const user = await this.databaseService.user.findUnique({
-  //     where: { id: currentUser.id },
-  //   });
+  async logout(currentUser: ICurrentUser): Promise<LogoutResponseDto> {
+    const response = await firstValueFrom(
+      this.httpService.post(
+        'auth/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser.accessToken}`,
+          },
+        },
+      ),
+    );
 
-  //   await this.redisService.setJwtLogout({
-  //     sub: currentUser.id,
-  //     jwtId: currentUser.jwt.id,
-  //     exp: currentUser.jwt.exp,
-  //     iat: currentUser.jwt.iat,
-  //   });
-
-  //   await this.redisService.setJwtRefresh({
-  //     sub: currentUser.id,
-  //     jwtId: currentUser.jwt.id,
-  //     exp: currentUser.jwt.exp,
-  //     iat: currentUser.jwt.iat,
-  //   });
-
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //   return {
-  //     message: 'Successfully logged out',
-  //     loggedOutAt: new Date().toISOString(),
-  //   };
-  // }
+    return response.data;
+  }
 
   // async refresh(refreshDto: RefreshDto): Promise<RefreshResponseDto> {
   //   try {

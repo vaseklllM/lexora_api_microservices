@@ -7,6 +7,12 @@ import { ValidateResponse } from '../common/decorators/validate-response.decorat
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
 import { RegisterDto } from './dto/register.dto';
+import { Auth } from 'src/common/decorators/auth';
+import { LogoutResponseDto } from './dto/logout-response.dto';
+import {
+  CurrentUser,
+  type ICurrentUser,
+} from 'src/common/decorators/current-user.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -35,17 +41,17 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  // @Post('logout')
-  // @Auth()
-  // @ApiOperation({ summary: 'User logout' })
-  // @ApiOkResponse({
-  //   description: 'Logs out user and returns access token',
-  //   type: LogoutResponseDto,
-  // })
-  // @ValidateResponse(LogoutResponseDto)
-  // logout(@CurrentUser() user: ICurrentUser): Promise<LogoutResponseDto> {
-  //   return this.authService.logout(user);
-  // }
+  @Post('logout')
+  @Auth()
+  @ApiOperation({ summary: 'User logout' })
+  @ApiOkResponse({
+    description: 'Logs out user and returns access token',
+    type: LogoutResponseDto,
+  })
+  @ValidateResponse(LogoutResponseDto)
+  logout(@CurrentUser() user: ICurrentUser): Promise<LogoutResponseDto> {
+    return this.authService.logout(user);
+  }
 
   // @Post('refresh')
   // @ApiOperation({ summary: 'Refresh access token' })
