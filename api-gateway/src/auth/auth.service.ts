@@ -10,28 +10,11 @@ import { RegisterResponseDto } from './dto/register-response.dto';
 export class AuthService {
   constructor(private readonly httpService: HttpService) {}
 
-  // private generateTokens(user: Pick<User, 'id' | 'email'>): JwtTokenDto {
-  //   const payload: JwtPayload = { sub: user.id, jwtId: uuidv4() };
-
-  //   return {
-  //     token: this.jwtService.sign(payload, {
-  //       secret: Buffer.from(process.env.JWT_SECRET as string, 'utf-8'),
-  //       expiresIn: `${JWT_TOKEN_LIFETIME_MINUTES}m`,
-  //     }),
-  //     refreshToken: this.jwtService.sign(payload, {
-  //       expiresIn: `${JWT_REFRESH_TOKEN_LIFETIME_DAYS}d`,
-  //       secret: Buffer.from(process.env.JWT_REFRESH_SECRET as string, 'utf-8'),
-  //     }),
-  //     expiresIn: 3600,
-  //   };
-  // }
-
   async login(user: LoginDto): Promise<LoginResponseDto> {
     try {
       const response = await firstValueFrom(
         this.httpService.post('auth/login', user),
       );
-
       return response.data;
     } catch (error) {
       if (error.response) {

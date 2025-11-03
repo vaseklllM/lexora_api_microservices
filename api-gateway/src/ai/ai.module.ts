@@ -10,7 +10,7 @@ import { HttpModule } from '@nestjs/axios';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        baseURL: configService.get<string>('API_MONOLITE'),
+        baseURL: configService.get<string>('AI_SERVICE'),
       }),
     }),
   ],
