@@ -45,6 +45,7 @@ export class CardService {
   }
 
   private async generateSoundUrls(
+    accessToken: string,
     text: string,
     languageCode: string,
   ): Promise<string[]> {
@@ -71,6 +72,7 @@ export class CardService {
     ) {
       promises.push(
         this.ttsService.synthesizeText({
+          accessToken: accessToken,
           text,
           languageCode,
           gender: 'female',
@@ -85,6 +87,7 @@ export class CardService {
     ) {
       promises.push(
         this.ttsService.synthesizeText({
+          accessToken: accessToken,
           text,
           languageCode,
           gender: 'male',
@@ -101,6 +104,7 @@ export class CardService {
 
   async create(
     userId: string,
+    accessToken: string,
     createCardDto: CreateCardDto,
   ): Promise<CreateCardResponseDto> {
     const transactionResult = await this.databaseService.$transaction(
@@ -136,6 +140,7 @@ export class CardService {
     );
 
     const soundUrls = await this.generateSoundUrls(
+      accessToken,
       createCardDto.textInLearningLanguage,
       transactionResult.deck.languageWhatILearnCode,
     );
@@ -152,6 +157,7 @@ export class CardService {
 
   async update(
     userId: string,
+    accessToken: string,
     updateCardDto: UpdateCardDto,
   ): Promise<UpdateCardResponseDto> {
     const { cardId, ...updateCardData } = updateCardDto;
@@ -198,6 +204,7 @@ export class CardService {
       await this.deleteUnuseSoundUrls(transactionResult.deleteSoundUrls);
 
       const soundUrls = await this.generateSoundUrls(
+        accessToken,
         updateCardData.textInLearningLanguage,
         transactionResult.deck.languageWhatILearnCode,
       );

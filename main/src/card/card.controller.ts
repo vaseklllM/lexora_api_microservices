@@ -39,7 +39,7 @@ export class CardController {
     @Body() createCardDto: CreateCardDto,
     @CurrentUser() user: ICurrentUser,
   ): Promise<CreateCardResponseDto> {
-    return this.cardService.create(user.id, createCardDto);
+    return this.cardService.create(user.id, user.accessToken, createCardDto);
   }
 
   @Put('update')
@@ -54,7 +54,7 @@ export class CardController {
     @Body() updateCardDto: UpdateCardDto,
     @CurrentUser() user: ICurrentUser,
   ): Promise<UpdateCardResponseDto> {
-    return this.cardService.update(user.id, updateCardDto);
+    return this.cardService.update(user.id, user.accessToken, updateCardDto);
   }
 
   @Get(':id')
