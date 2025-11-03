@@ -27,6 +27,22 @@ export class AuthService {
     return response.data;
   }
 
+  async logout(currentUser: ICurrentUser): Promise<LogoutResponseDto> {
+    const response = await firstValueFrom(
+      this.httpService.post(
+        'auth/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser.accessToken}`,
+          },
+        },
+      ),
+    );
+
+    return response.data;
+  }
+
   // async googleLogin(googleLoginDto: GoogleLoginDto): Promise<LoginResponseDto> {
   //   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   //   const ticket = await client.verifyIdToken({
@@ -123,22 +139,6 @@ export class AuthService {
   //     },
   //   );
   // }
-
-  async logout(currentUser: ICurrentUser): Promise<LogoutResponseDto> {
-    const response = await firstValueFrom(
-      this.httpService.post(
-        'auth/logout',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${currentUser.accessToken}`,
-          },
-        },
-      ),
-    );
-
-    return response.data;
-  }
 
   // async refresh(refreshDto: RefreshDto): Promise<RefreshResponseDto> {
   //   try {

@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        baseURL: configService.get<string>('API_MONOLITE'),
+        baseURL: configService.get<string>('AUTH_SERVICE'),
       }),
     }),
   ],
