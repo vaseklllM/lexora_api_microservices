@@ -95,6 +95,7 @@ export class FolderResponseDto extends FolderDto {
   @Type(() => FolderDto)
   childFolders: FolderDto[];
 
+  // TODO: Add child decks
   // @ApiProperty({
   //   type: [DeckDto],
   //   example: [DeckExample],
