@@ -6,6 +6,7 @@ import { JwtStrategy } from './common/strategies/jwt.strategy';
 import { AiModule } from '././ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { FolderModule } from './folder/folder.module';
+import { LanguagesModule } from './languages/languages.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FolderModule } from './folder/folder.module';
     AiModule,
     AuthModule,
     FolderModule,
+    LanguagesModule,
   ],
   controllers: [AppController],
   providers: [JwtStrategy],
