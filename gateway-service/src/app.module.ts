@@ -7,11 +7,13 @@ import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { FolderModule } from './folder/folder.module';
 import { LanguagesModule } from './languages/languages.module';
+import { validate } from './common/config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate,
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

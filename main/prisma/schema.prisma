@@ -16,7 +16,7 @@ datasource db {
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
-  name          String
+  name          String   @db.VarChar(255)
   avatar        String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -88,7 +88,7 @@ model Deck {
   userId                  String
   user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   folderId                String?
-  folder                  Folder?   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folder                  Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
   languageWhatIKnowCode   String 
   languageWhatIKnow       Language @relation("LanguageWhatIKnow", fields: [languageWhatIKnowCode], references: [code])
   languageWhatILearnCode  String 
@@ -118,7 +118,7 @@ model Card {
   deck                            Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
   userId                          String
   user                            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  isNew                           Boolean @default(true)
+  isNew                           Boolean  @default(true)
   lastReviewedAt                  DateTime @default(now())
   soundUrls                       String[]
   cefr                            Cefr
