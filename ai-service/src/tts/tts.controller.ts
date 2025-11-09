@@ -6,7 +6,7 @@ import { SynthesizeDto } from './dto/synthesize.dto';
 import { SynthesizeResponseDto } from './dto/synthesize-response.dto';
 import { DeleteTTSDto } from './dto/delete-tts.dto';
 import { DeleteTTSResponseDto } from './dto/delete-tts-response.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('TTS')
 @Controller('tts')
@@ -15,6 +15,10 @@ export class TtsController {
 
   @Post('synthesize')
   @Auth()
+  @ApiResponse({
+    description: 'The synthesized text',
+    type: SynthesizeResponseDto,
+  })
   @ValidateResponse(SynthesizeResponseDto)
   synthesize(
     @Body() synthesizeDto: SynthesizeDto,
