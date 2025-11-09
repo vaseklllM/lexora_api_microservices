@@ -6,7 +6,9 @@ import { SynthesizeDto } from './dto/synthesize.dto';
 import { SynthesizeResponseDto } from './dto/synthesize-response.dto';
 import { DeleteTTSDto } from './dto/delete-tts.dto';
 import { DeleteTTSResponseDto } from './dto/delete-tts-response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('TTS')
 @Controller('tts')
 export class TtsController {
   constructor(private readonly ttsService: TtsService) {}

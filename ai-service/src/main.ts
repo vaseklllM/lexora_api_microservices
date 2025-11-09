@@ -4,6 +4,7 @@ import { BadRequestException } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,6 +46,18 @@ async function bootstrap() {
         });
       },
     }),
+  );
+
+  const config = new DocumentBuilder()
+    .setTitle('AI Service')
+    .setDescription('API documentation for AI Service')
+    .setVersion('1.0')
+    .addTag('AI', 'AI-powered translation and word analysis services')
+    .addTag('TTS', 'Text-to-Speech services')
+    .build();
+
+  SwaggerModule.setup('api', app, () =>
+    SwaggerModule.createDocument(app, config),
   );
 
   await app.listen(process.env.PORT ?? 4001);

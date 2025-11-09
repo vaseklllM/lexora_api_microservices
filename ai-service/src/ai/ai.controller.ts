@@ -4,12 +4,18 @@ import { ValidateResponse } from 'src/common/decorators/validate-response.decora
 import { FillCardDataResponseDto } from './dto/fill-card-data-response.dto';
 import { FillCardDataDto } from './dto/fill-card-data.dto';
 import { AiService } from './ai.service';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('AI')
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Get('fill-card-data')
+  @ApiCreatedResponse({
+    description: 'The filled card data',
+    type: FillCardDataResponseDto,
+  })
   @Auth()
   @ValidateResponse(FillCardDataResponseDto)
   fillCardData(
